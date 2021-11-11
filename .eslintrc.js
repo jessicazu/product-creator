@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'simple-import-sort/imports': 'warn',
     'simple-import-sort/exports': 'warn',
+    'import/no-unresolved': 'off',
   },
   overrides: [
     {
