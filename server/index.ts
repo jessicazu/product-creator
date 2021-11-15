@@ -5,6 +5,8 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import next from 'next'
 
+import webhookRouter from './routes/webhook'
+
 dotenv.config()
 
 const { PORT, NODE_ENV, SHOPIFY_API_KEY, SHOPIFY_API_SECRET, SCOPES, HOST } =
@@ -74,22 +76,22 @@ app.prepare().then(() => {
     })
   )
 
-  router.post('/webhooks', async (ctx) => {
-    try {
-      await Shopify.Webhooks.Registry.process(ctx.req, ctx.res)
-      console.log(`Webhook processed, returned status code 200`)
-    } catch (error) {
-      console.log(`Failed to process webhook: ${error}`)
-    }
-  })
+  // router.post('/webhooks', async (ctx) => {
+  //   try {
+  //     await Shopify.Webhooks.Registry.process(ctx.req, ctx.res)
+  //     console.log(`Webhook processed, returned status code 200`)
+  //   } catch (error) {
+  //     console.log(`Failed to process webhook: ${error}`)
+  //   }
+  // })
 
-  router.post(
-    '/graphql',
-    verifyRequest({ returnHeader: true }),
-    async (ctx) => {
-      await Shopify.Utils.graphqlProxy(ctx.req, ctx.res)
-    }
-  )
+  // router.post(
+  //   '/graphql',
+  //   verifyRequest({ returnHeader: true }),
+  //   async (ctx) => {
+  //     await Shopify.Utils.graphqlProxy(ctx.req, ctx.res)
+  //   }
+  // )
 
   router.get('(/_next/static/.*)', handleRequest) // Static content is clear
   router.get('/_next/webpack-hmr', handleRequest) // Webpack content is clear
@@ -109,9 +111,11 @@ app.prepare().then(() => {
     }
   })
 
-  server.use(router.allowedMethods())
-  server.use(router.routes())
-  server.listen(port, () => {
-    console.log(`> Ready on http://localhost:${port}`)
-  })
+  server
+    .use(router.allowedMethods())
+    .use(router.routes())
+    .use(webhookRouter.routes())
+    .listen(port, () => {
+      console.log(`> Ready on http://localhost:${port}`)
+    })
 })
