@@ -10,11 +10,6 @@ dotenv.config()
 const { PORT, NODE_ENV, SHOPIFY_API_KEY, SHOPIFY_API_SECRET, SCOPES, HOST } =
   process.env as any
 
-console.log(SHOPIFY_API_KEY)
-console.log(SHOPIFY_API_SECRET)
-console.log(SCOPES)
-console.log(HOST)
-
 const port = parseInt(PORT, 10) || 8081
 const dev = NODE_ENV !== 'production'
 const app = next({ dev })
